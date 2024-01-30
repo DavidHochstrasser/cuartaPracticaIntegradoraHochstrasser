@@ -1,0 +1,16 @@
+<h1>Ingrese usuario</h1>
+
+<form action="/api/sessions/login" method="post" style="margin-top: 24px;">
+    <input type="email" name="email" class="form-control" placeholder="E-mail" style="width: 300px;"><br />
+    <input type="password" name="pass" class="form-control" placeholder="Password" style="width: 300px;"><br />
+    <div style="margin-bottom: 32px;">
+        <a href="/restore">Restaurar contraseña</a>
+    </div>
+
+    <button type="submit" class="btn btn-success">Ingresar</button><br/><br/>
+ 
+    <div >
+        <a class="btn btn-success" href="/api/sessions/github">Ingresar con GitHub</a>
+    </div>
+    
+</form>

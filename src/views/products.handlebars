@@ -1,0 +1,12 @@
+<h1>{{title}}</h1>
+
+{{#each products}}
+  <div class="product">
+    <h3>{{title}}</h3>
+    <h5>USD {{price}}</h5>
+    <p>{{description}}</p>
+    <p>Modelo: {{code}}</p>
+    <button href="/carts">Agregar al carrito</button>
+    <a href="/api/carts/{{_id}}">Ver detalles</a>
+  </div>
+{{/each}}

@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import handlebars from "express-handlebars";
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -14,12 +13,10 @@ import productsRouter from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import cookiesRouter from "./routes/cookies.routes.js";
 import sessionRouter from "./routes/session.routes.js";
+import MongoSingleton from "./services/mongo.singleton.js";
+import errorsDictionary from "./services/error.dictionary.js";
 
-// import config from "./config.js";
-
-const PORT = 8080;
-const MONGOOSE_URL =
-  "mongodb+srv://coder_55605:Balcon580@cluster0.ndlarik.mongodb.net/ecommerce";
+import config from "./config.js";
 
 const app = express();
 app.use(express.json());
@@ -31,7 +28,7 @@ app.use(
   session({
     // store: new fileStorage({ path: "./sessions", ttl: 60, retries: 0 }),1
     store: MongoStore.create({
-      mongoUrl: MONGOOSE_URL,
+      mongoUrl: config.mongoUrl,
       mongoOptions: {},
       ttl: 60,
       clearInterval: 5000,
@@ -58,9 +55,26 @@ app.use("/api/users", usersRouter);
 app.use("/static", express.static(`${__dirname}/public`));
 
 try {
-  await mongoose.connect(MONGOOSE_URL);
-  const server = app.listen(PORT, () => {
-    console.log(`Backend activo ${PORT} conectado a base de datos`);
+  MongoSingleton.getInstance();
+  const server = app.listen(config.port, () => {
+    console.log(`Backend activo ${config.port} conectado a base de datos`);
+    app.use((err, req, res, next) => {
+      const code = err.code || 500;
+      const message = err.message || "Hubo un problema, error desconocido";
+
+      return res.status(code).send({
+        status: "ERR",
+        data: message,
+        // Habilitar si se quiere más info del error en modo development
+        // stack: config.MODE === 'devel' ? err.stack : {}
+      });
+    });
+
+    app.all("*", (req, res, next) => {
+      res
+        .status(404)
+        .send({ status: "ERR", data: errorsDictionary.PAGE_NOT_FOUND.message });
+    });
   });
 } catch (err) {
   console.log(`No se puede conectar con base de datos (${err.message})`);

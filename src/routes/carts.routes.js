@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { CartManager } from "../controllers/cart.manager.mdb.js";
+import { CartController } from "../controllers/cart.controller.js";
 import cartsModel from "../models/carts.model.js";
 
 const router = Router();
-const manager = new CartManager();
+const manager = new CartController();
 
 router.post("/", async (req, res) => {
   const newCart = req.body;

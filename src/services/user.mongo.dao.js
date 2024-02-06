@@ -1,6 +1,6 @@
 import usersModel from "../models/users.model.js";
 
-export default class UserManager {
+export class UserService {
   constructor() {}
 
   async getUsers() {

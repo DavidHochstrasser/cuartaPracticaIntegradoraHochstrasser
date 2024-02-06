@@ -1,10 +1,10 @@
 import { Router } from "express";
 import uploader from "../uploader.js";
-import ProductManager from "../controllers/product.manager.mdb.js";
+import ProductController from "../controllers/product.controller.js";
 import productModel from "../models/product.model.js";
 
 const router = Router();
-const manager = new ProductManager();
+const manager = new ProductController();
 
 // router.get("/", async (req, res) => {
 //   const products = await manager.getProducts();

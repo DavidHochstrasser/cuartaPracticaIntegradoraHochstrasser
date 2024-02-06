@@ -1,12 +1,12 @@
 import { Router } from "express";
-import ProductManager from "../controllers/product.manager.mdb.js";
-import { CartManager } from "../controllers/cart.manager.mdb.js";
-import UserManager from "../controllers/user.manager.mdb.js";
+import ProductController from "../controllers/product.controller.js";
+import { CartController } from "../controllers/cart.controller.js";
+import UserController from "../controllers/user.controller.js";
 
 const router = Router();
-const manager = new ProductManager();
-const manager1 = new CartManager();
-const manager2 = new UserManager();
+const manager = new ProductController();
+const manager1 = new CartController();
+const manager2 = new UserController();
 
 router.get("/products", async (req, res) => {
   if (req.session.user) {

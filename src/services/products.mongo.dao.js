@@ -1,6 +1,6 @@
-import productModel from "../models/product.model.js"; //No es necesario importar mongoose porque ya lo importamos en product.model;
+import productModel from "../models/product.model.js";
 
-class ProductManager {
+export class ProductService {
   constructor() {}
 
   async addProduct() {
@@ -73,4 +73,3 @@ class ProductManager {
     }
   }
 }
-export default ProductManager;

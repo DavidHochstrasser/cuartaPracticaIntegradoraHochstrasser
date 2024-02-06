@@ -86,7 +86,7 @@ router.get(
   passport.authenticate("githubAuth", { failureRedirect: "/login" }),
   async (req, res) => {
     req.session.user = { username: req.user.email, admin: true };
-    // req.session.user = req.user
+    req.session.user = req.user;
     res.redirect("/profile");
   }
 );
@@ -103,7 +103,7 @@ router.post("/login", async (req, res) => {
     if (userInDb !== null && isValidPassword(userInDb, pass)) {
       if (isValidPassword(userInDb, pass)) {
         req.session.user = { username: email, admin: true };
-        res.redirect("/profile");
+        res.redirect("/products");
       }
     } else {
       res.status(401).send({ status: "ERR", data: "Datos no válidos" });

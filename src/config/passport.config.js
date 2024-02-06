@@ -19,8 +19,6 @@ const initPassport = () => {
 
       const user = await userModel.findOne({ email: username });
 
-      // El usuario ya existe, llamamos a done() para terminar el proceso de
-      // passport, con null (no hay error) y false (sin devolver datos de usuario)
       if (user) return done(null, false);
 
       const newUser = {
@@ -48,9 +46,6 @@ const initPassport = () => {
 
       const user = await userModel.findOne({ email: username });
 
-      // El usuario no existe, no podemos restaurar nada.
-      // Llamamos a done() para terminar el proceso de
-      // passport, con null (no hay error) y false (sin devolver datos de usuario)
       if (!user) return done(null, false);
 
       const process = await userModel.findOneAndUpdate(
@@ -71,7 +66,7 @@ const initPassport = () => {
 
       if (!user) {
         const name_parts = profile._json.name.split("");
-        const newUser = {
+        let newUser = {
           first_name: name_parts[0],
           last_name: name_parts[1],
           email: profile._json.email,

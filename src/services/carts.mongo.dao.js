@@ -1,7 +1,7 @@
 import cartModel from "../models/carts.model.js";
 import productModel from "../models/product.model.js";
 
-export class CartManager {
+export class CartService {
   constructor() {}
 
   async getCarts() {

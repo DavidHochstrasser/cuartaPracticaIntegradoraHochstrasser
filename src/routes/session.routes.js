@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import usersModel from "../models/users.model.js";
-import { createHash, isValidPassword } from "../utils.js";
+import { createHash, generateToken, isValidPassword } from "../utils.js";
 import initPassport from "../config/passport.config.js";
 
 initPassport();
@@ -86,7 +86,7 @@ router.get(
   passport.authenticate("githubAuth", { failureRedirect: "/login" }),
   async (req, res) => {
     req.session.user = { username: req.user.email, admin: true };
-    req.session.user = req.user;
+    // req.session.user = req.user;
     res.redirect("/profile");
   }
 );
@@ -97,10 +97,26 @@ router.get(
 router.post("/login", async (req, res) => {
   try {
     const { email, pass } = req.body;
-
     const userInDb = await usersModel.findOne({ email: email });
 
     if (userInDb !== null && isValidPassword(userInDb, pass)) {
+      // Autentificacion a traves de token JWT o sessions
+
+      // // Utilizando tokens JWT
+      // const access_token = generateToken(
+      //   { username: email, role: "user" },
+      //   "1h"
+      // );
+      // res.cookie("codertoken", access_token, {
+      //   maxAge: 60 * 60 * 1000,
+      //   httpOnly: true,
+      // });
+      // res.status(200).send({
+      //   status: "OK",
+      //   data: { access: "authorized", token: access_token },
+      // });
+
+      // Utilizando sessions
       if (isValidPassword(userInDb, pass)) {
         req.session.user = { username: email, admin: true };
         res.redirect("/products");

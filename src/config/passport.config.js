@@ -1,6 +1,7 @@
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import GithubStrategy from "passport-github2";
+
 import userModel from "../models/users.model.js";
 import { createHash, isValidPassword } from "../utils.js";
 
@@ -61,12 +62,11 @@ const initPassport = () => {
 
   const verifyGithub = async (accessToken, refreshToken, profile, done) => {
     try {
-      console.log(profile);
       const user = await userModel.findOne({ email: profile._json.email });
 
       if (!user) {
-        const name_parts = profile._json.name.split("");
-        let newUser = {
+        const name_parts = profile._json.name.split(" ");
+        const newUser = {
           first_name: name_parts[0],
           last_name: name_parts[1],
           email: profile._json.email,

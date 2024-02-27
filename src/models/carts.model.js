@@ -6,7 +6,10 @@ mongoose.pluralize(null);
 const collection = "carts";
 
 const schema = new mongoose.Schema({
-  products: { type: [mongoose.Schema.Types.ObjectId], ref: "products" },
+  products: {
+    type: [{ pid: mongoose.Schema.Types.ObjectId, qty: Number }],
+    ref: "products",
+  },
   total: { type: Number, required: true },
 });
 

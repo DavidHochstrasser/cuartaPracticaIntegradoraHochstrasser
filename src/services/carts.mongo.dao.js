@@ -7,10 +7,6 @@ export class CartService {
   async getCarts() {
     try {
       const carts = await cartModel.find().lean();
-      // const carts = await cartModel.aggregate([
-      //   { $match: { code: "Nuevo" } },
-      //
-      // ]);
       return carts;
     } catch (err) {
       return err.message;
@@ -95,22 +91,53 @@ export class CartService {
       return err.message;
     }
   }
-  //revisar esta funcion
-  async checkStock(cid) {
-    try {
-      const cart = await cartModel.findById(cid);
-      if (!cart) {
-        throw new Error("No se encuentra el carrito");
+  async processPurchase(cid) {
+    const cart = await service.getCartById(cid);
+
+    if (cart === null) {
+      throw new CustomError({
+        ...errorsDictionary.ID_NOT_FOUND,
+        moreInfo: "cart",
+      });
+    } else {
+      let total = 0;
+      let cartModified = false;
+
+      for (const item of cart.products) {
+        const pid = item.pid._id;
+        const qty = item.qty;
+        const stock = item.pid.stock;
+        const price = item.pid.price;
+
+        if (stock > 0) {
+          let newStock = 0;
+
+          if (stock >= qty) {
+            newStock = stock - qty;
+            item.qty = 0;
+            total += qty * price;
+          } else {
+            newStock = 0;
+            item.qty -= stock;
+            total += stock * price;
+          }
+
+          await productService.updateProduct(pid, { stock: newStock });
+          cartModified = true;
+        }
       }
-      const productIndex = cart.products.indexOf(stock);
-      if (productIndex === -1) {
-        throw new Error("No se encuentra disponible el producto en stock");
+
+      if (cartModified) {
+        await cart.save();
+        await ticketService.addTicket({
+          amount: total,
+          purchaser: req.user._id,
+        });
+
+        return cart;
+      } else {
+        return errorsDictionary.NO_TICKET_GENERATED.message;
       }
-      cart.products.splice(productIndex, 1);
-      await cart.save();
-      return { status: "OK", data: `Producto ${pid} eliminado del carrito` };
-    } catch (err) {
-      return { status: "Error", error: err.message };
     }
   }
 }

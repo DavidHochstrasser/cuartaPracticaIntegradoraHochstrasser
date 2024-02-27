@@ -5,6 +5,8 @@ import GithubStrategy from "passport-github2";
 import userModel from "../models/users.model.js";
 import { createHash, isValidPassword } from "../utils.js";
 
+import config from "../config.js";
+
 const initPassport = () => {
   // Función utilizada por la estrategia registerAuth
   const verifyRegistration = async (req, username, password, done) => {
@@ -60,9 +62,12 @@ const initPassport = () => {
     }
   };
 
+  // Función utilizada por la estrategia GithubStrategy
   const verifyGithub = async (accessToken, refreshToken, profile, done) => {
     try {
-      const user = await userModel.findOne({ email: profile._json.email });
+      const user = await userModel
+        .findOne({ email: profile._json.email })
+        .lean();
 
       if (!user) {
         const name_parts = profile._json.name.split(" ");
@@ -85,7 +90,7 @@ const initPassport = () => {
     }
   };
 
-  // Creamos estrategia local de autenticación para registro registerAuth
+  // Estrategia LOCAL de autenticación para registro registerAuth
   passport.use(
     "registerAuth",
     new LocalStrategy(
@@ -98,7 +103,7 @@ const initPassport = () => {
     )
   );
 
-  // Creamos estrategia local de autenticación para restauración de clave restoreAuth
+  // Estrategia LOCAL de autenticación para restauración de clave restoreAuth
   passport.use(
     "restoreAuth",
     new LocalStrategy(
@@ -111,25 +116,18 @@ const initPassport = () => {
     )
   );
 
-  // Creamos estrategia para autenticación externa con Github githubAuth
-
+  // Estrategia EXTERNA para autenticación con Github githubAuth
   passport.use(
     "githubAuth",
     new GithubStrategy(
       {
-        clientID: "Iv1.1457dda4525b1c7f",
-        clientSecret: " 0cb3a05d9ea27a51f18d949b4f22325320eb7259",
+        clientID: config.GITHUB_AUTH.clientId,
+        clientSecret: config.GITHUB_AUTH.clientSecret,
         callbackURL: "http://localhost:8080/api/sessions/githubcallback",
       },
       verifyGithub
     )
   );
-
-  //App ID: 811353
-
-  //Client ID: Iv1.1457dda4525b1c7f
-
-  //0cb3a05d9ea27a51f18d949b4f22325320eb7259
 
   passport.serializeUser((user, done) => {
     done(null, user._id);

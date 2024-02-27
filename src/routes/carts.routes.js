@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { CartController } from "../controllers/cart.controller.js";
+import { authToken } from "../utils.js";
 import cartsModel from "../models/carts.model.js";
 
 const router = Router();
@@ -10,20 +11,27 @@ router.post("/", async (req, res) => {
   res.status(200).send({ status: "Ok", data: await manager.addCart(newCart) });
 });
 
-router.get("/", async (req, res) => {
+router.get("/", authToken, async (req, res) => {
   try {
     res.status(200).send({ status: "OK", data: await manager.getCarts() });
   } catch (err) {
     res.status(500).send({ status: "ERR", data: err.message });
   }
 });
-//Revisar este endpoint
-router.get("/:cid/purchase", async (req, res) => {
+
+router.get("/:cid/purchase", authToken, async (req, res) => {
   try {
-    res.status(200).send({ status: "OK", data: await manager.getCarts() });
+    res.status(200).send({
+      status: "OK",
+      data: await manager.processPurchase(req.params.cid),
+    });
   } catch (err) {
     res.status(500).send({ status: "ERR", data: err.message });
   }
+});
+//Revisar este endpoint
+router.get("/tickets", authToken, async (req, res) => {
+  res.status(200).send({ status: "OK", data: await manager.getTickets() });
 });
 
 router.delete("/:cid/products/:pid", async (req, res) => {

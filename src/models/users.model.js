@@ -11,6 +11,8 @@ const schema = new mongoose.Schema({
   email: { type: String, required: true },
   gender: { type: String, required: true },
   password: { type: String, required: true },
+  // cart: { type: mongoose.Schema.Types.ObjectId },
+  // role: { type: String, enum: ["user", "premium", "admin"], default: "user" },
 });
 
 schema.plugin(mongoosePaginate);

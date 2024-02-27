@@ -1,17 +1,19 @@
 import mongoose from "mongoose";
-import productModel from "../models/product.model.js";
+import bcrypt from "bcrypt";
 
 mongoose.pluralize(null);
 
-const collection = "carts";
+const collection = "tickets";
 
 const schema = new mongoose.Schema({
-  products: { type: [mongoose.Schema.Types.ObjectId], ref: "products" },
-  total: { type: Number, required: true },
-});
-
-schema.pre("find", function () {
-  this.populate({ path: "products", model: productModel });
+  code: { type: String, default: () => bcrypt.genSaltSync(8) },
+  purchase_datetime: { type: Date, default: new Date().toISOString() },
+  amount: { type: Number, default: 0 },
+  purchaser: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "users_with_pass",
+  },
 });
 
 export default mongoose.model(collection, schema);

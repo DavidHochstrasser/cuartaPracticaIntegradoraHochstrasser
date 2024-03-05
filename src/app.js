@@ -5,6 +5,8 @@ import session from "express-session";
 import FileStore from "session-file-store";
 import MongoStore from "connect-mongo";
 import passport from "passport";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 import { __dirname } from "./utils.js";
 import usersRouter from "./routes/users.routes.js";
@@ -37,6 +39,20 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Documentación sistema AdoptMe",
+      description:
+        "Esta documentación cubre toda la API habilitada para AdoptMe",
+    },
+  },
+  apis: ["./src/docs/**/*.yaml"],
+};
+const specs = swaggerJSDoc(swaggerOptions);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,6 +67,7 @@ app.use("/api/cookies", cookiesRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/users", usersRouter);
 
+app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 app.use("/static", express.static(`${__dirname}/public`));
 
 try {

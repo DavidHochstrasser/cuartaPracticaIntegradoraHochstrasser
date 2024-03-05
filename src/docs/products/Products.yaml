@@ -1,0 +1,74 @@
+paths:
+  /api/products:
+    get:
+      summary: "Retorna todos los Productos de la DB"
+      tags:
+        - Products
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: "ERROR general"
+
+  /api/products/{uid}:
+    get:
+      summary: "Retorna un producto por ID"
+      tags:
+        - Products
+      parameters:
+        - name: uid
+          in: path
+          required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: "ERROR general"
+
+components:
+  schemas:
+    Product:
+      type: object
+      propierties:
+        _id:
+          type: objectId
+          description: "ID MongoDB"
+        title:
+          type: string
+          description: "Titulo"
+        description:
+          type: string
+          description: "Descripcion"
+        price:
+          type: number
+          description: "Precio"
+        thumbnail:
+          type: string
+          description: "Imagen"
+        code:
+          type: string
+          description: "Codigo"
+        stock:
+          type: number
+          description: "Stock"
+
+      example:
+        _id: 638b8c323f3a4b3be6dc397e
+        title: Chevrolet Onix
+        description: El Chevrolet Onix es un auto compacto con estilo y tecnología moderna
+        price: 24000
+        thumbnail: thumbnail6
+        code: nuevo
+        stock: 50

@@ -12,7 +12,7 @@ const schema = new mongoose.Schema({
   purchaser: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "users_with_pass",
+    ref: "users",
   },
 });
 

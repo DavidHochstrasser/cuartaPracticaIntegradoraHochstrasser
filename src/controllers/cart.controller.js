@@ -1,8 +1,10 @@
 import { CartService } from "../services/carts.mongo.dao.js";
 import TicketService from "../services/ticket.mongo.dao.js";
+import { ProductService } from "../services/products.mongo.dao.js";
 
 const cartService = new CartService();
 const ticketService = new TicketService();
+const productService = new ProductService();
 
 export class CartController {
   async getCarts() {
@@ -32,19 +34,29 @@ export class CartController {
     return await ticketService.getTickets();
   }
 
-  async updateCart(id, newContent) {
-    try {
-      return await cartService.updateCart(id, newContent);
-    } catch (err) {
-      return err.message;
-    }
-  }
-
   async deleteCart(cid) {
     try {
       return await cartService.deleteCart(cid);
     } catch (err) {
       return err.message;
+    }
+  }
+
+  async updateCart(cid, pid, qty) {
+    const stockData = await productService.getProduct(pid);
+
+    if (stockData === null) {
+      throw new CustomError(errorsDictionary.PRODUCT_NOT_FOUND);
+    } else {
+      const stock = stockData.stock;
+      if (stock < qty) {
+        throw new CustomError({
+          ...errorsDictionary.INSUFFICIENT_STOCK,
+          moreInfo: `max: ${stock} unidades`,
+        });
+      } else {
+        return await service.updateCart(cid, pid, qty);
+      }
     }
   }
 

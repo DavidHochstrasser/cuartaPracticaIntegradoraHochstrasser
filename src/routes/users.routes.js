@@ -24,6 +24,8 @@ router.get("/paginated", async (req, res) => {
   }
 });
 
+router.get("/premium/:uid", async (req, res) => {});
+
 router.post("/", async (req, res, next) => {
   const { first_name, last_name, email, gender, password } = req.body;
   if (first_name && last_name && email && gender && password) {
